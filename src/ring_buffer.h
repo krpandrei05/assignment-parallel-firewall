@@ -5,6 +5,8 @@
 
 #include <sys/types.h>
 #include <string.h>
+// Header pentru functii pe thread-uri (posix thread)
+#include <pthread.h>
 
 typedef struct so_ring_buffer_t {
 	char *data;
@@ -16,6 +18,15 @@ typedef struct so_ring_buffer_t {
 	size_t cap;
 
 	/* TODO: Add syncronization primitives */
+
+	// Doar un singur thread modifica sau citeste din buffer
+	pthread_mutex_t rb_mutex;
+	// Conditie pentru consumer
+	pthread_cond_t cond_cons_not_empty;
+	// Conditie pentru producer
+	pthread_cond_t cond_prod_not_full;
+	// (stopped == 1) -> Semnaleaza consumerii ca nu vor mai veni pachete noi
+	int stopped;
 } so_ring_buffer_t;
 
 int     ring_buffer_init(so_ring_buffer_t *rb, size_t cap);
