@@ -70,9 +70,13 @@ int main(int argc, char **argv)
 
 	/* TODO: wait for child threads to finish execution*/
 	(void) threads;
-
+	int i;
+	// Astept executia tuturor thread-urilor consumer
+	for (i = 0; i < num_consumers; i++)
+		pthread_join(thread_ids[i], NULL);
 	free(thread_ids);
-
+	// Distrug buffer-ul
+	ring_buffer_destroy(&ring_buffer);
 	return 0;
 }
 
